@@ -2,6 +2,7 @@ import random
 import BasketballAverages
 import math as maths
 import Imperial
+import Position
 
 # The minimum and maximum rating for skills
 min_rating = 10
@@ -79,18 +80,18 @@ class Player:
         self.pos = Position(self)
 
         # Assign the player to first available team with an open spot
-        validteam = False
+        valid_team = False
         i = 1
-        while validteam == False:
+        while not valid_team:
             # If there are less than 5 players on the team, assign the player
             if len(teams[i].players) < 5:
                 teams[i].addplayer(self)
                 self.team = i
-                validteam = True
+                valid_team = True
             elif i == len(teams) - 1:
                 teams[0].addplayer(self)
                 self.team = 0
-                validteam = True
+                valid_team = True
             else:
                 i += 1
 
