@@ -71,3 +71,6 @@ class Nameset:
         # If no double-barrelled name is generated, return the single name
         else:
             return self.surnames["name"][name_num]
+
+    def get_country(self):
+        return self.country
