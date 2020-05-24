@@ -1,3 +1,7 @@
+from Database import create_connection
+from Constants import database
+
+
 class Team:
     """This class defines the attributes of a team"""
 
@@ -87,3 +91,20 @@ def add_location(conn, location):
     cur.execute(sql, location)
     return cur.lastrowid
 
+
+def add_teams():
+    conn = create_connection(database)
+    with conn:
+        create_team(conn, 'Leicester', 'Leicester Riders', 'Riders', 'LEI')
+        create_team(conn, 'Edinburgh', 'City of Edinburgh', 'Kings', 'CoE')
+        create_team(conn, 'Glasgow', 'Radisson Red Glasgow Rocks', 'Rocks')
+        create_team(conn, 'Manchester', 'Manchester Magic', 'Magic', 'MAN')
+        create_team(conn, 'Worthing', 'Worthing Thunder', 'Thunder', 'WTH')
+        create_team(conn, 'Worcester', 'Worcester Wolves', 'Wolves', 'WCS')
+        create_team(conn, 'Newcastle upon Tyne', 'Newcastle Eagles', 'Eagles')
+        create_team(conn, 'London', 'London City Royals', 'Royals', 'LCR')
+        create_team(conn, 'London', 'London Lions', 'Lions', 'LON')
+        create_team(conn, 'Dublin', 'Dublin Giants', 'Giants', 'DUB')
+        create_team(conn, 'Liverpool')
+        create_team(conn, 'Cardiff', 'Cardiff Cougars', 'Cougars', 'CAR')
+        create_team(conn, 'Bristol', 'Bristol Flyers', 'Flyers', 'BRI')
