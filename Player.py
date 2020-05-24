@@ -3,9 +3,9 @@ import BasketballAverages
 import math as maths
 import Imperial
 import Position
-from Database import create_connection, database
+from Database import create_connection
 
-from Constants import max_rating, min_rating, avg_height, height_sd, avg_weight, skills, tendencies
+from Constants import database, max_rating, min_rating, avg_height, height_sd, avg_weight, skills, tendencies
 
 
 class Player:
@@ -113,7 +113,7 @@ def create_player(conn, country):
     reach = round((height + armspan) / random.normalvariate(1.5477, 0.02251), 1)
 
     l_height = maths.floor(height + (random.random() * 5) + 1.27)
-    l_height_feet = Imperial.metricround(l_height, 0)
+    l_height_feet = Imperial.from_metric_round(l_height, 0)
 
     # NBA average BMI is 24.88 with a sd of 1.6633
     weight = round(random.normalvariate(24.9, 1.6633) * ((height / 100) ** 2), 1)
@@ -196,7 +196,7 @@ def create_player(conn, country):
     data = tuple(data)
     cur.execute(sql, data)
 
-    position = (Position(reach, l_height, skill_dict))
+    position = (Position.Position(l_height, skill_dict))
     sql = """INSERT INTO positions (id, position)
             VALUES(?, ?)"""
     cur.execute(sql, (current_id, str(position)))
@@ -217,12 +217,12 @@ def add_player(conn, player):
     return cur.lastrowid
 
 
-def add_random_players(quantity):
+def add_random_players(quantity, country):
     # create a database connection
     conn = create_connection(database)
     with conn:
         for i in range(quantity):
-            create_player(conn)
+            create_player(conn, country)
 
 
 def read_players(player_id):
