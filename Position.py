@@ -1,7 +1,4 @@
-from Player import skills, avg_height, height_sd
-
-# Five standard basketball positions, stored in a list
-pos = ["PG", "SG", "SF", "PF", "C"]
+from Constants import pos, skills, avg_weight, height_sd
 
 
 class Position:
