@@ -2,7 +2,7 @@ import sqlite3
 from sqlite3 import Error
 import os
 
-database = r"Test"
+from Constants import skills, database
 
 
 def create_file(db_file, iteration=0):
@@ -44,6 +44,7 @@ def create_table(conn, sql):
         c.execute(sql)
     except Error as e:
         print(e)
+
 
 def define_tables():
 
@@ -128,28 +129,6 @@ def define_tables():
                 abbreviation text NOT NULL 
                 );"""
         create_table(conn, sql)
-
-        # create a new location
-        location = ("Aberdeen", "Scotland");
-        add_location(conn, location)
-        location = ("London", "England");
-        add_location(conn, location)
-
-        for i in range(50000):
-            create_player(conn)
-
-        create_team(conn, 'Leicester', 'Leicester Riders', 'Riders', 'LEI')
-        create_team(conn, 'Edinburgh', 'City of Edinburgh', 'Kings', 'CoE')
-        create_team(conn, 'Glasgow', 'Radisson Red Glasgow Rocks', 'Rocks')
-        create_team(conn, 'Manchester', 'Manchester Magic', 'Magic', 'MAN')
-        create_team(conn, 'Worthing', 'Worthing Thunder', 'Thunder', 'WTH')
-        create_team(conn, 'Worcester', 'Worcester Wolves', 'Wolves', 'WCS')
-        create_team(conn, 'Newcastle upon Tyne', 'Newcastle Eagles', 'Eagles')
-        create_team(conn, 'London', 'London City Royals', 'Royals', 'LCR')
-        create_team(conn, 'London', 'London Lions', 'Lions', 'LON')
-        create_team(conn, 'Dublin', 'Dublin Giants', 'Giants', 'DUB')
-        create_team(conn, 'Liverpool')
-        create_team(conn, 'Cardiff', 'Cardiff Cougars', 'Cougars', 'CAR')
-        create_team(conn, 'Bristol', 'Bristol Flyers', 'Flyers', )
+    return conn
 
 
