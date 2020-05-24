@@ -1,3 +1,5 @@
+database = r"Test"
+
 # Five standard basketball positions, stored in a list
 pos = ["PG", "SG", "SF", "PF", "C"]
 
