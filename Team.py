@@ -1,7 +1,3 @@
-from Database import create_connection, create_table, database
-from Player import skills, create_player
-
-
 class Team:
     """This class defines the attributes of a team"""
 
