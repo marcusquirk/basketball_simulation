@@ -1,4 +1,4 @@
-def average(self, values):
+def average(values):
     """finds the mean of a given list of values"""
     total = 0
     # Find the sum of all the values
@@ -9,7 +9,7 @@ def average(self, values):
     return mean
 
 
-def average_dict(self, values):
+def average_dict(values):
     """finds the mean of a given dictionary of values"""
     total = 0
     for i in values:
