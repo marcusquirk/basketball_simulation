@@ -1,3 +1,7 @@
+from Database import create_connection, create_table, database
+from Player import skills, create_player
+
+
 class Team:
     """This class defines the attributes of a team"""
 
@@ -44,3 +48,46 @@ class Team:
             return self.name
         else:
             return self.city
+
+
+def create_team(conn, city, name="", short="", abbrev=""):
+    """
+    :param conn:    the database connection
+    :param city:    the location of the team (e.g. Leicester, Madrid)
+    :param name:    the full of the team (e.g. Leicester Riders, Real Madrid Baloncesto)
+    :param short:   the short name of the team (e.g. Riders, Real Madrid)
+    :param abbrev:  the abbreviation of the team (e.g. LEI, RMB)"""
+
+    # If no full name given, make it the name of the city
+    if name == "":
+        name = city
+
+    # If no short name is given, make it the name of the city
+    if short == "":
+        short = city
+
+    # If no abbreviation is given, make it the first three letters of the city, uppercase
+    if abbrev == "":
+        abbrev = city[0:3].upper()
+    else:
+        # The maximum length of the abbreviation is four letters
+        abbrev = abbrev[0:4]
+
+    sql = """INSERT INTO teams (name, location, nickname, abbreviation)
+            VALUES (?, ?, ?, ?);"""
+    cur = conn.cursor()
+    cur.execute(sql, (name, city, short, abbrev))
+
+
+def add_location(conn, location):
+    """
+    Create a new location into the locations table
+    :param location: a tuple location in the form (town, country)
+    :param conn:     the database connection
+    """
+    sql = ''' INSERT INTO locations (place, country)
+              VALUES(?, ?) '''
+    cur = conn.cursor()
+    cur.execute(sql, location)
+    return cur.lastrowid
+
