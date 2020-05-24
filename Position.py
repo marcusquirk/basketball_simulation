@@ -1,4 +1,4 @@
-from Constants import pos, skills, avg_weight, height_sd
+from Constants import pos, skills, avg_height, height_sd
 
 
 class Position:
@@ -36,7 +36,7 @@ class Position:
                        25 - ((height - avg_lh - 1.6 * height_sd) / (0.15 * height_sd)) ** 2)
         Position.tally(self, 10 * diff["3pt"], 25 * diff["3pt"], 10 * diff["3pt"], 0, -15 * diff["3pt"])
         Position.tally(self, 35 * diff["pass"], 15 * diff["pass"], 10 * diff["pass"], 0, -5 * diff["pass"])
-        Position.tally(self, 35 * diff["hand"], 15 * diff["hand"], 10 * diff["hand"], 0, -15 * diff["hand"])
+        Position.tally(self, 35 * diff["dribble"], 15 * diff["dribble"], 10 * diff["dribble"], 0, -15 * diff["dribble"])
         Position.tally(self, -10 * diff["post"], 0, 5 * diff["post"], 15 * diff["post"], 25 * diff["post"])
         Position.tally(self, -10 * diff["post_d"], 0, 5 * diff["post_d"], 15 * diff["post_d"], 30 * diff["post_d"])
         Position.tally(self, 20 * diff["per_d"], 20 * diff["per_d"], 15 * diff["per_d"], 5 * diff["per_d"],
