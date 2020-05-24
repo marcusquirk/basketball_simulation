@@ -3,6 +3,7 @@ import BasketballAverages
 import math as maths
 import Imperial
 import Position
+from Database import create_connection, database
 
 # The minimum and maximum rating for skills
 min_rating = 10
@@ -12,6 +13,7 @@ max_rating = 99
 # Player heights will be determined with a normal distribution
 avg_height = 196.5
 height_sd = 8
+avg_weight = 24.9*((avg_height/100)**2)
 
 # Define what the skills and tendencies are
 skills = ["3pt", "mid", "fin", "dunk",  "ft", "post", "pass", "drive", "dribble", "per_d", "post_d", "blk", "speed",
@@ -106,3 +108,143 @@ class Player:
                 self.l_height) + "\t" + str(Imperial.from_metric_round(self.height, 1)) + ", " + str(
                 Imperial.from_metric_round(self.armspan, 1)) + ", " + str(Imperial.from_metric_round(self.reach, 1)) +\
                    ", " + str(self.avg) + ", " + str(self.pot)
+
+
+def create_player(conn, country):
+    forename = country.gen_forename()
+    surname = country.gen_surname()
+
+    # Give our player a height (listed), weight, barefoot height, armspan, and standing reach
+    # Height uses our predefined average and standard deviation
+    height = round(random.normalvariate(avg_height, height_sd), 1)
+
+    # NBA average "ape index" is 1.06, with a minimum of roughly 1.0 and a maximum of roughly 1.12
+    armspan = round(random.normalvariate(height * 1.06, (height * 0.06) / 3), 1)
+
+    # Standing reach in the NBA has an average of (height+armspan)/1.5477.
+    # The divisor of 1.5477 has a sd of 0.02251, due to some of a player's height being above their shoulders.
+    reach = round((height + armspan) / random.normalvariate(1.5477, 0.02251), 1)
+
+    l_height = maths.floor(height + (random.random() * 5) + 1.27)
+    l_height_feet = Imperial.metricround(l_height, 0)
+
+    # NBA average BMI is 24.88 with a sd of 1.6633
+    weight = round(random.normalvariate(24.9, 1.6633) * ((height / 100) ** 2), 1)
+
+    sql = """INSERT INTO players (forename, surname)
+            VALUES(?, ?)"""
+    cur = conn.cursor()
+    cur.execute(sql, (forename, surname))
+    current_id = cur.lastrowid
+
+    data = [current_id, str(l_height_feet), weight, l_height, height, armspan, reach]
+
+    sql = """INSERT INTO physicals (id, height, weight, 'metric height', barefoot, armspan, reach)
+            VALUES(?, ?, ?, ?, ?, ?, ?)"""
+    cur.execute(sql, data)
+
+    skill_dict = {}
+
+    for i in skills:
+        if i == "3pt":
+            sql = "INSERT INTO skills (id, '3pt'"
+            skill_dict[i] = (random.randint(min_rating, max_rating))
+        elif i == "speed":
+            # Speed is related to weight (see Google Sheet)
+            sql += ", " + i
+            temp_rating = random.randint(min_rating, max_rating)
+            if weight >= avg_weight:
+                factor = (weight - avg_weight) / 17
+                skill_dict[i] = int(factor * random.random() * temp_rating + (1 - factor) * temp_rating)
+            else:
+                factor = (avg_weight - weight) / 17
+                rxn = random.random()
+                skill_dict[i] = int(
+                    factor * (max_rating - (rxn * temp_rating)) + (1 - factor) * (max_rating - temp_rating))
+        elif i == "strength":
+            # Strength is related to weight
+            sql += ", " + i
+            temp_rating = random.randint(min_rating, max_rating)
+            if weight < avg_weight:
+                factor = (avg_weight - weight) / 17
+                skill_dict[i] = int(factor * random.random() * temp_rating + (1 - factor) * temp_rating)
+            else:
+                factor >= (weight - avg_weight) / 17
+                rxn = random.random()
+                skill_dict[i] = int(
+                    factor * (max_rating - (rxn * temp_rating)) + (1 - factor) * (max_rating - temp_rating))
+        else:
+            sql += ", " + i
+            skill_dict[i] = (random.randint(min_rating, max_rating))
+
+    sql += ", avg, ovr, pot)\n"
+
+    skill_dict["avg"] = int(BasketballAverages.average_dict(skill_dict))
+
+    # Overall rating, roughly scaled like 2K
+    skill_dict["ovr"] = (int(((skill_dict["avg"] - 55) * 1) + 75.5))
+
+    # Give each player a random pot that is greater than their avg
+    skill_dict["pot"] = (
+        maths.ceil((random.random() * random.random() * (max_rating - skill_dict["avg"])) + skill_dict["avg"]))
+
+    # If overall rating outside 1-99, fix that
+    for i in "speed", "strength", "avg", "ovr", "pot":
+        if skill_dict[i] >= 100:
+            skill_dict[i] = 99
+        elif skill_dict[i] <= 0:
+            skill_dict[i] = 1
+
+    for i in skills:
+        if i == "3pt":
+            sql += "VALUES(?, ?"
+        else:
+            sql += ", ?"
+
+    sql += ", ?, ?, ?);"
+
+    data = [current_id]
+    skill_list = skill_dict.values()
+    data.extend(skill_list)
+    data = tuple(data)
+    cur.execute(sql, data)
+
+    position = (Position(reach, l_height, skill_dict))
+    sql = """INSERT INTO positions (id, position)
+            VALUES(?, ?)"""
+    cur.execute(sql, (current_id, str(position)))
+
+    return cur.lastrowid
+
+
+def add_player(conn, player):
+    """
+    Add a player to the players table
+    :param conn:   the database connection
+    :param player: the player's name, in the form (forename, surname)"""
+
+    sql = ''' INSERT INTO players (forename, surname)
+              VALUES(?, ?) '''
+    cur = conn.cursor()
+    cur.execute(sql, player)
+    return cur.lastrowid
+
+
+def add_random_players(quantity):
+    # create a database connection
+    conn = create_connection(database)
+    with conn:
+        for i in range(quantity):
+            create_player(conn)
+
+
+def read_players(player_id):
+    # create a database connection
+    conn = create_connection(database)
+    with conn:
+        sql = """SELECT p.surname, po.position, ph.height, s.ovr FROM player p INNER JOIN position po ON p.id = po.id 
+        INNER JOIN physicals ph ON p.id = ph.id INNER JOIN skills s ON p.id = s.id WHERE p.id= """
+        sql += str(player_id)
+        cur = conn.cursor()
+        cur.execute(sql)
+        print(cur.fetchall())
