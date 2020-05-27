@@ -229,7 +229,7 @@ def read_players(player_id):
     # create a database connection
     conn = create_connection(database)
     with conn:
-        sql = """SELECT p.surname, po.position, ph.height, s.ovr FROM player p INNER JOIN position po ON p.id = po.id 
+        sql = """SELECT p.surname, po.position, ph.height, s.ovr FROM players p INNER JOIN positions po ON p.id = po.id 
         INNER JOIN physicals ph ON p.id = ph.id INNER JOIN skills s ON p.id = s.id WHERE p.id= """
         sql += str(player_id)
         cur = conn.cursor()
