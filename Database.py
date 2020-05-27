@@ -61,7 +61,8 @@ def define_tables():
                                     CREATE TABLE IF NOT EXISTS locations (
                                     id integer PRIMARY KEY,
                                     place text NOT NULL,
-                                    country text NOT NULL
+                                    country text NOT NULL,
+                                    population integer NOT NULL
                                 );"""
 
     # create a database connection
@@ -130,5 +131,3 @@ def define_tables():
                 );"""
         create_table(conn, sql)
     return conn
-
-
