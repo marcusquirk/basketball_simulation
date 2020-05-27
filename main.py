@@ -2,6 +2,7 @@ from Database import define_tables
 from Player import add_random_players, read_players, create_player
 from Team import add_teams
 import Nameset
+import Locations
 
 
 def main():
@@ -16,6 +17,8 @@ def main():
     elif startup.lower() == 'read':
         which_player = input("Which player?")
         read_players(which_player)
+    locations = Locations.Locations("Locations.json")
+    print(locations.locations)
 
 
 if __name__ == "__main__":
