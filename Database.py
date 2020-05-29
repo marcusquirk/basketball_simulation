@@ -62,7 +62,7 @@ def define_tables():
                                     id integer PRIMARY KEY,
                                     place text NOT NULL,
                                     country text NOT NULL,
-                                    population integer NOT NULL
+                                    cdf integer NOT NULL
                                 );"""
 
     # create a database connection
