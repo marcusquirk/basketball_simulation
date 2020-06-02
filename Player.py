@@ -17,9 +17,9 @@ class Player:
         # self.id = len(players)
 
         # Generate a name
-        self.forename = country.gen_forename()
-        self.surname = country.gen_surname()
-        self.country = country.get_country
+        self.forename = country["names"].gen_forename()
+        self.surname = country["names"].gen_surname()
+        self.country = country["names"].get_country
 
         # Give our player a height, 'listed height', armspan, and standing reach
         # Height uses our predefined average and standard deviation
@@ -98,8 +98,8 @@ class Player:
 
 
 def create_player(conn, country):
-    forename = country.gen_forename()
-    surname = country.gen_surname()
+    forename = country["names"].gen_forename()
+    surname = country["names"].gen_surname()
 
     # Give our player a height (listed), weight, barefoot height, armspan, and standing reach
     # Height uses our predefined average and standard deviation
@@ -156,7 +156,7 @@ def create_player(conn, country):
                 factor = (avg_weight - weight) / 17
                 skill_dict[i] = int(factor * random.random() * temp_rating + (1 - factor) * temp_rating)
             else:
-                factor >= (weight - avg_weight) / 17
+                factor = (weight - avg_weight) / 17
                 rxn = random.random()
                 skill_dict[i] = int(
                     factor * (max_rating - (rxn * temp_rating)) + (1 - factor) * (max_rating - temp_rating))
@@ -201,6 +201,9 @@ def create_player(conn, country):
             VALUES(?, ?)"""
     cur.execute(sql, (current_id, str(position)))
 
+    sql = """INSERT INTO hometowns (id, hometown)
+            VALUES(?, ?)"""
+    cur.execute(sql, (current_id, country["locations"].gen_hometown()))
     return cur.lastrowid
 
 
@@ -229,8 +232,10 @@ def read_players(player_id):
     # create a database connection
     conn = create_connection(database)
     with conn:
-        sql = """SELECT p.surname, po.position, ph.height, s.ovr FROM players p INNER JOIN positions po ON p.id = po.id 
-        INNER JOIN physicals ph ON p.id = ph.id INNER JOIN skills s ON p.id = s.id WHERE p.id= """
+        sql = """SELECT p.surname, po.position, ph.height, s.ovr, l.place FROM players p INNER JOIN positions po ON
+        p.id = po.id INNER JOIN physicals ph ON p.id = ph.id INNER JOIN skills s ON p.id = s.id INNER JOIN hometowns h
+        ON p.id = h.id INNER JOIN locations l ON h.hometown = l.id WHERE p.id >= 0 AND p.id <= """
+        # sql = """SELECT p.surname, h.hometown FROM players p INNER JOIN hometowns h ON p.id = h.id WHERE p.id = """
         sql += str(player_id)
         cur = conn.cursor()
         cur.execute(sql)
