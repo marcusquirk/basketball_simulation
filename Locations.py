@@ -17,15 +17,24 @@ class Locations:
 
         # Create a cumulative distribution function based on the probability density function.
         self.locations["cdf"] = self.locations["pdf"]
+        self.locations["id"] = 1
         for i in range(1, len(self.locations["pdf"])):
             self.locations["cdf"][i] = self.locations["cdf"][i-1]+self.locations["cdf"][i]
+            self.locations["id"] = i
 
     def gen_location(self):
         # Generate a random number between 0 and the total cumulative frequency of names
         randnum = random.random() * self.locations["cdf"][-1]
         # Choose a name
-        name_num = bisect.bisect(self.locations["cdf"], randnum)
-        return self.locations["city"][name_num]
+        city_num = bisect.bisect(self.locations["cdf"], randnum)
+        return self.locations["city"][city_num]
+
+    def gen_hometown(self):
+        # Generate a random number between 0 and the total cumulative frequency of names
+        randnum = random.random() * self.locations["cdf"][-1]
+        # Choose a name
+        city_num = bisect.bisect(self.locations["cdf"], randnum)
+        return city_num+1
 
     def to_database(self):
         conn = create_connection(database)
