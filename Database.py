@@ -130,4 +130,16 @@ def define_tables():
                 abbreviation text NOT NULL 
                 );"""
         create_table(conn, sql)
+
+        # create table for hometowns
+        sql = """DROP TABLE IF EXISTS hometowns"""
+        create_table(conn, sql)
+        sql = """
+                CREATE TABLE IF NOT EXISTS hometowns (
+                id integer NOT NULL,
+                hometown integer NOT NULL,
+                FOREIGN KEY(id) REFERENCES player(id),
+                FOREIGN KEY(hometown) REFERENCES locations(id)
+                );"""
+        create_table(conn, sql)
     return conn
