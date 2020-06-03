@@ -12,7 +12,6 @@ class Player:
     # This class defines all of the attributes of a player
 
     def __init__(self, country):
-
         # Give each player a unique ID
         # self.id = len(players)
 
@@ -46,7 +45,7 @@ class Player:
         for i in tendencies:
             self.tendencies[i] = random.randint(min_rating, max_rating)
 
-        # A player's 'height' (actually based on standing reach) will be one of our strongest indicators of position.
+        # A player's 'height' (actually based on standing reach) will be one of our strongest indicators of position
         self.skills["ht"] = int(
             (self.reach - ((avg_height * 2.06) / 1.5477 - 4 * height_sd) / 8 * height_sd) * 100)
 
@@ -203,7 +202,7 @@ def create_player(conn, country):
 
     sql = """INSERT INTO hometowns (player_id, hometown_id)
             VALUES(?, ?)"""
-    cur.execute(sql, (current_id, country["locations"].gen_hometown()))
+    cur.execute(sql, (current_id, country["cities"].gen_hometown()))
     return cur.lastrowid
 
 
@@ -232,9 +231,9 @@ def read_players(player_id):
     # create a database connection
     conn = create_connection(database)
     with conn:
-        sql = """SELECT p.surname, po.position, ph.height, s.ovr, l.place FROM players p INNER JOIN positions po ON
+        sql = """SELECT p.surname, po.position, ph.height, s.ovr, c.city FROM players p INNER JOIN positions po ON
         p.id = po.id INNER JOIN physicals ph ON p.id = ph.id INNER JOIN skills s ON p.id = s.id INNER JOIN hometowns h
-        ON p.id = h.player_id INNER JOIN locations l ON h.hometown_id = l.id WHERE p.id >= 0 AND p.id <= """
+        ON p.id = h.player_id INNER JOIN cities c ON h.hometown_id = c.id WHERE p.id >= 0 AND p.id <= """
         # sql = """SELECT p.surname, h.hometown FROM players p INNER JOIN hometowns h ON p.id = h.id WHERE p.id = """
         sql += str(player_id)
         cur = conn.cursor()
