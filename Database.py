@@ -49,7 +49,7 @@ def create_table(conn, sql):
 def define_tables():
 
     sql_drop_player = """DROP TABLE IF EXISTS players"""
-    sql_drop_location = """DROP TABLE IF EXISTS locations"""
+    sql_drop_location = """DROP TABLE IF EXISTS cities"""
 
     sql_player_table = """
                                 CREATE TABLE IF NOT EXISTS players (
@@ -58,9 +58,9 @@ def define_tables():
                                         surname text NOT NULL
                                 );"""
     sql_location_table = """
-                                    CREATE TABLE IF NOT EXISTS locations (
+                                    CREATE TABLE IF NOT EXISTS cities (
                                     id integer PRIMARY KEY,
-                                    place text NOT NULL,
+                                    city text NOT NULL,
                                     country text NOT NULL,
                                     cdf integer NOT NULL
                                 );"""
@@ -136,10 +136,10 @@ def define_tables():
         create_table(conn, sql)
         sql = """
                 CREATE TABLE IF NOT EXISTS hometowns (
-                id integer NOT NULL,
-                hometown integer NOT NULL,
-                FOREIGN KEY(id) REFERENCES player(id),
-                FOREIGN KEY(hometown) REFERENCES locations(id)
+                player_id integer NOT NULL,
+                hometown_id integer NOT NULL,
+                FOREIGN KEY(player_id) REFERENCES player(id),
+                FOREIGN KEY(hometown_id) REFERENCES cities(id)
                 );"""
         create_table(conn, sql)
     return conn
