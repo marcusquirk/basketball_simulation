@@ -201,7 +201,7 @@ def create_player(conn, country):
             VALUES(?, ?)"""
     cur.execute(sql, (current_id, str(position)))
 
-    sql = """INSERT INTO hometowns (id, hometown)
+    sql = """INSERT INTO hometowns (player_id, hometown_id)
             VALUES(?, ?)"""
     cur.execute(sql, (current_id, country["locations"].gen_hometown()))
     return cur.lastrowid
@@ -234,7 +234,7 @@ def read_players(player_id):
     with conn:
         sql = """SELECT p.surname, po.position, ph.height, s.ovr, l.place FROM players p INNER JOIN positions po ON
         p.id = po.id INNER JOIN physicals ph ON p.id = ph.id INNER JOIN skills s ON p.id = s.id INNER JOIN hometowns h
-        ON p.id = h.id INNER JOIN locations l ON h.hometown = l.id WHERE p.id >= 0 AND p.id <= """
+        ON p.id = h.player_id INNER JOIN locations l ON h.hometown_id = l.id WHERE p.id >= 0 AND p.id <= """
         # sql = """SELECT p.surname, h.hometown FROM players p INNER JOIN hometowns h ON p.id = h.id WHERE p.id = """
         sql += str(player_id)
         cur = conn.cursor()

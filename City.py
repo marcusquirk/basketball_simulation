@@ -43,7 +43,7 @@ class City:
             current_id = cur.lastrowid
             for i in range(len(self.cities["pdf"])):
                 data = [current_id, self.cities["city"][i], self.country, self.cities["pdf"][i]]
-                sql = """INSERT INTO cities (id, place, country, cdf)
+                sql = """INSERT INTO cities (id, city, country, cdf)
                         VALUES(?, ?, ?, ?)"""
                 cur.execute(sql, data)
 
