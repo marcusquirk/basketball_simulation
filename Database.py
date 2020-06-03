@@ -59,7 +59,7 @@ def define_tables():
                                 );"""
     sql_location_table = """
                                     CREATE TABLE IF NOT EXISTS cities (
-                                    id integer PRIMARY KEY,
+                                    id text PRIMARY KEY,
                                     city text NOT NULL,
                                     country text NOT NULL,
                                     population integer NOT NULL
@@ -100,7 +100,8 @@ def define_tables():
         sql = """
                 CREATE TABLE IF NOT EXISTS skills (
                 id integer NOT NULL,
-                ovr integer NOT NULL"""
+                ovr integer NOT NULL,
+                grade text NOT NULL"""
         for i in skills:
             sql += """,
             '""" + i + """' integer NOT NULL"""
@@ -136,7 +137,7 @@ def define_tables():
         create_table(conn, sql)
         sql = """
                 CREATE TABLE IF NOT EXISTS hometowns (
-                player_id integer NOT NULL,
+                player_id text NOT NULL,
                 hometown_id integer NOT NULL,
                 FOREIGN KEY(player_id) REFERENCES player(id),
                 FOREIGN KEY(hometown_id) REFERENCES cities(id)
