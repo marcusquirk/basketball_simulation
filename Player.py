@@ -163,16 +163,42 @@ def create_player(conn, country):
             sql += ", " + i
             skill_dict[i] = (random.randint(min_rating, max_rating))
 
-    sql += ", avg, ovr, pot)\n"
+    sql += ", avg, ovr, pot, grade)\n"
 
     skill_dict["avg"] = int(BasketballAverages.average_dict(skill_dict))
 
     # Overall rating, roughly scaled like 2K
     skill_dict["ovr"] = (int(((skill_dict["avg"] - 55) * 1) + 75.5))
 
-    # Give each player a random pot that is greater than their avg
+    # Give each player a random pot that is greater than their ovr
     skill_dict["pot"] = (
-        maths.ceil((random.random() * random.random() * (max_rating - skill_dict["avg"])) + skill_dict["avg"]))
+        maths.ceil((random.random() * random.random() * (max_rating - skill_dict["ovr"])) + skill_dict["ovr"]))
+
+    # Give each player a grade based on their ovr and pot
+    temp_grade = (skill_dict["pot"] + skill_dict["ovr"])/2
+
+    if temp_grade > 90:
+        skill_dict["grade"] = "A+"
+    elif temp_grade > 87:
+        skill_dict["grade"] = "A"
+    elif temp_grade > 84:
+        skill_dict["grade"] = "A-"
+    elif temp_grade > 81:
+        skill_dict["grade"] = "B+"
+    elif temp_grade > 78:
+        skill_dict["grade"] = "B"
+    elif temp_grade > 75:
+        skill_dict["grade"] = "B-"
+    elif temp_grade > 72:
+        skill_dict["grade"] = "C+"
+    elif temp_grade > 69:
+        skill_dict["grade"] = "C"
+    elif temp_grade > 66:
+        skill_dict["grade"] = "C-"
+    elif temp_grade > 63:
+        skill_dict["grade"] = "D"
+    else:
+        skill_dict["grade"] = "F"
 
     # If overall rating outside 1-99, fix that
     for i in "speed", "strength", "avg", "ovr", "pot":
@@ -187,7 +213,7 @@ def create_player(conn, country):
         else:
             sql += ", ?"
 
-    sql += ", ?, ?, ?);"
+    sql += ", ?, ?, ?, ?);"
 
     data = [current_id]
     skill_list = skill_dict.values()
