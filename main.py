@@ -2,12 +2,12 @@ from Database import define_tables
 from Player import add_random_players, read_players, create_player
 from Team import add_teams
 import Nameset
-import City
+import Cities
 
 
 def main():
     england = {"names": Nameset.Nameset("England", "England_First.json", "England_Last.json"),
-               "locations": City.City("England.json", "England")}
+               "locations": Cities.Cities("England.json", "England")}
 
     startup = input("'new', 'read' or 'add'?")
     if startup.lower() == 'new':

@@ -7,7 +7,7 @@ from Database import create_connection
 from Constants import database
 
 
-class City:
+class Cities:
 
     def __init__(self, cities_file, country):
         self.country = country
