@@ -8,9 +8,9 @@ import Cities
 
 def main():
     england = {"names": Nameset.Nameset("England", "England_First.json", "England_Last.json"),
-               "cities": Cities.Cities("England.json", "England")}
+               "cities": Cities.Cities("England.json", "England", "ENG")}
     scotland = {"names": Nameset.Nameset("Scotland", "Scotland_First.json", "Scotland_Last.json"),
-                "cities": Cities.Cities("Scotland.json", "Scotland")}
+                "cities": Cities.Cities("Scotland.json", "Scotland", "SCO")}
 
     startup = input("'new', 'read' or 'add'?")
     if startup.lower() == 'new':
