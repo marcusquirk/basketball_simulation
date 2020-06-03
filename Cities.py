@@ -16,11 +16,9 @@ class Cities:
         self.cities = json.load(json_file)
 
         # Create a cumulative distribution function based on the probability density function.
-        self.cities["cdf"] = self.cities["pdf"]
-        self.cities["id"] = 1
+        self.cities["cdf"] = self.cities["pdf"].copy()
         for i in range(1, len(self.cities["pdf"])):
             self.cities["cdf"][i] = self.cities["cdf"][i-1]+self.cities["cdf"][i]
-            self.cities["id"] = i
 
     def gen_location(self):
         # Generate a random number between 0 and the total cumulative frequency of names
@@ -43,7 +41,7 @@ class Cities:
             current_id = cur.lastrowid
             for i in range(len(self.cities["pdf"])):
                 data = [current_id, self.cities["city"][i], self.country, self.cities["pdf"][i]]
-                sql = """INSERT INTO cities (id, city, country, cdf)
+                sql = """INSERT INTO cities (id, city, country, population)
                         VALUES(?, ?, ?, ?)"""
                 cur.execute(sql, data)
 
