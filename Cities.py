@@ -10,7 +10,7 @@ from Constants import database
 
 class Cities:
 
-    def __init__(self, cities_file, country, code):
+    def __init__(self, cities_file, country, code, current_id):
         self.country = country
         self.code = code.upper()
 
@@ -20,9 +20,12 @@ class Cities:
         # Create a cumulative distribution function based on the probability density function.
         self.cities["cdf"] = self.cities["pdf"].copy()
         self.cities["id"] = self.cities["pdf"].copy()
+
         for i in range(0, len(self.cities["pdf"])):
             self.cities["cdf"][i] = self.cities["cdf"][i-1]+self.cities["cdf"][i]
-            self.cities["id"][i] = code + int(maths.log(len(self.cities["city"]), 10)-len(str(i))+1)*"0" + str(i)
+            # self.cities["id"][i] = code + int(maths.log(len(self.cities["city"]), 10)-len(str(i))+1)*"0" + str(i)
+            self.cities["id"][i] = current_id
+            current_id += 1
 
     def gen_location(self):
         # Generate a random number between 0 and the total cumulative frequency of names
@@ -42,7 +45,6 @@ class Cities:
         conn = create_connection(database)
         with conn:
             cur = conn.cursor()
-            current_id = cur.lastrowid
             for i in range(len(self.cities["pdf"])):
                 data = [self.cities["id"][i], self.cities["city"][i], self.country, self.cities["pdf"][i]]
                 sql = """INSERT INTO cities (id, city, country, population)
@@ -51,3 +53,6 @@ class Cities:
 
     def get_country(self):
         return self.country
+
+    def get_quantity(self):
+        return len(self.cities["pdf"])
