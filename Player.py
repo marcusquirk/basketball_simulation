@@ -16,9 +16,9 @@ class Player:
         # self.id = len(players)
 
         # Generate a name
-        self.forename = country["names"].gen_forename()
-        self.surname = country["names"].gen_surname()
-        self.country = country["names"].get_country
+        self.forename = country.nameset.gen_forename()
+        self.surname = country.nameset.gen_surname()
+        self.country = country.nameset.get_country
 
         # Give our player a height, 'listed height', armspan, and standing reach
         # Height uses our predefined average and standard deviation
@@ -97,8 +97,8 @@ class Player:
 
 
 def create_player(conn, country):
-    forename = country["names"].gen_forename()
-    surname = country["names"].gen_surname()
+    forename = country.nameset.gen_forename()
+    surname = country.nameset.gen_surname()
 
     # Give our player a height (listed), weight, barefoot height, armspan, and standing reach
     # Height uses our predefined average and standard deviation
@@ -228,7 +228,7 @@ def create_player(conn, country):
 
     sql = """INSERT INTO hometowns (player_id, hometown_id)
             VALUES(?, ?)"""
-    cur.execute(sql, (current_id, country["cities"].gen_hometown()))
+    cur.execute(sql, (current_id, country.cities.gen_hometown()))
     return cur.lastrowid
 
 
