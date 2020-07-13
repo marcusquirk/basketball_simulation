@@ -9,8 +9,7 @@ class Nameset:
     """ Loads a json name file and constructs a cumulative distribution function.
     The name file should contain the names as an array that is the key for the value 'names' the related probability
     density function of those names as a key for the value 'pdf'\""""
-    def __init__(self, country, forename_file, surname_file, forename_prob=0.005, surname_prob=0.05):
-        self.country = country
+    def __init__(self, forename_file, surname_file, forename_prob=0.005, surname_prob=0.05):
         self.forename_prob = forename_prob
         self.surname_prob = surname_prob
 
@@ -71,6 +70,3 @@ class Nameset:
         # If no double-barrelled name is generated, return the single name
         else:
             return self.surnames["name"][name_num]
-
-    def get_country(self):
-        return self.country
