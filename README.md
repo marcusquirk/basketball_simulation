@@ -17,4 +17,5 @@ By the third week of Block 2, if the machine learning approach is not feasible, 
 ### Materials
 * Python
 * Real-world play-by-play dataset
+* Machine learning library
 
