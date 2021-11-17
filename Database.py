@@ -29,7 +29,6 @@ def create_connection(db_file):
     try:
         if os.path.exists(db_filename):
             conn = sqlite3.connect(db_filename)
-            print('opened!')
         else:
             conn = create_file(db_file)
             print("File not found, creating file...")
@@ -55,7 +54,9 @@ def define_tables():
                                 CREATE TABLE IF NOT EXISTS players (
                                         id integer PRIMARY KEY,
                                         forename text NOT NULL,
-                                        surname text NOT NULL
+                                        surname text NOT NULL,
+                                        team_id integer,
+                                        FOREIGN KEY(team_id) REFERENCES teams(id)
                                 );"""
     sql_location_table = """
                                     CREATE TABLE IF NOT EXISTS cities (
@@ -69,6 +70,20 @@ def define_tables():
     conn = create_connection(database)
 
     with conn:
+        #create_table(conn, """DROP TABLES""")
+
+        # create table for teams
+        sql = """DROP TABLE IF EXISTS teams"""
+        create_table(conn, sql)
+        sql = """
+                CREATE TABLE IF NOT EXISTS teams (
+                id integer PRIMARY KEY,
+                name text NOT NULL,
+                location text NOT NULL,
+                nickname text NOT NULL,
+                abbreviation text NOT NULL 
+                );"""
+        create_table(conn, sql)
 
         # create projects table
         create_table(conn, sql_drop_player)
@@ -116,19 +131,6 @@ def define_tables():
                 id integer NOT NULL,
                 position text NOT NULL,
                 FOREIGN KEY(id) REFERENCES player(id)
-                );"""
-        create_table(conn, sql)
-
-        # create table for teams
-        sql = """DROP TABLE IF EXISTS teams"""
-        create_table(conn, sql)
-        sql = """
-                CREATE TABLE IF NOT EXISTS teams (
-                id integer PRIMARY KEY,
-                name text NOT NULL,
-                location text NOT NULL,
-                nickname text NOT NULL,
-                abbreviation text NOT NULL 
                 );"""
         create_table(conn, sql)
 

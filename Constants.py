@@ -14,6 +14,13 @@ height_sd = 8
 avg_weight = 24.9*((avg_height/100)**2)
 
 # Define what the skills and tendencies are
-skills = ["3pt", "mid", "fin", "dunk",  "ft", "post", "pass", "drive", "dribble", "per_d", "post_d", "blk", "speed",
+skills = ["3pt", "mid", "fin",  "ft", "post", "pass", "drive", "dribble", "per_d", "post_d", "blk", "speed",
           "jump", "strength", "oreb", "dreb"]
-tendencies = ["3pt", "mid", "pass", "drive", "post", "layup", "dunk", "foul", "stl", "blk"]
+tendencies = ["3pt", "mid", "pass", "drive", "post", "foul", "stl", "blk"]
+
+#Define what the counting stats are
+stats = ["pts","orb","drb","reb","ast","stl","blk","fgm","fga","3pm","3pa","ftm","fta","tov","pf","pos","min"]
+
+#Define the number and length of periods (e.g. quarters, halves)
+period_length = 10
+num_periods = 4

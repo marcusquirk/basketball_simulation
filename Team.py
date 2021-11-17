@@ -89,7 +89,7 @@ def add_location(conn, location):
               VALUES(?, ?) '''
     cur = conn.cursor()
     cur.execute(sql, location)
-    return cur.lastrowid
+    #return cur.lastrowid
 
 
 def add_teams():

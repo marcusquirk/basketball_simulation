@@ -1,11 +1,11 @@
-import random
-import BasketballAverages
 import math as maths
+import random
+
+import BasketballAverages
 import Imperial
 import Position
-from Database import create_connection
-
 from Constants import database, max_rating, min_rating, avg_height, height_sd, avg_weight, skills, tendencies
+from Database import create_connection
 
 
 class Player:
@@ -92,11 +92,32 @@ class Player:
         if info == "vitals":
             return str(self.pos) + " " + str(self.pos.second_position) + "\t" + str(self)[0:15] + "\t" + str(
                 self.l_height) + "\t" + str(Imperial.from_metric_round(self.height, 1)) + ", " + str(
-                Imperial.from_metric_round(self.armspan, 1)) + ", " + str(Imperial.from_metric_round(self.reach, 1)) +\
+                Imperial.from_metric_round(self.armspan, 1)) + ", " + str(Imperial.from_metric_round(self.reach, 1)) + \
                    ", " + str(self.avg) + ", " + str(self.pot)
 
 
-def create_player(conn, country):
+def read_team(id):
+    conn = create_connection(database)
+    cur = conn.cursor()
+    sql = "SELECT p.id, p.forename, p.surname, h.reach, s.ovr, s.'3pt', s.mid, s.fin,  s.ft, s.post, s.pass, s.drive, " \
+          "s.dribble, s.per_d, s.post_d, s.blk, s.speed," \
+          "s.jump, s.strength, s.oreb, s.dreb FROM skills AS s INNER JOIN players AS p ON s.id = p.id INNER JOIN teams " \
+          "AS t ON p.team_id = t.id INNER JOIN physicals AS h ON p.id=h.id WHERE t.id = " + str(id)
+    cur.execute(sql)
+    result = [i for i in cur.fetchall()]
+    return result
+
+
+def read_player(id):
+    conn = create_connection(database)
+    cur = conn.cursor()
+    sql = "SELECT * FROM skills WHERE id = " + str(id)
+    cur.execute(sql)
+    result = [i for i in cur.fetchall()[0]]
+    return result
+
+
+def create_player(conn, country, team_id=0):
     forename = country.nameset.gen_forename()
     surname = country.nameset.gen_surname()
 
@@ -117,10 +138,26 @@ def create_player(conn, country):
     # NBA average BMI is 24.88 with a sd of 1.6633
     weight = round(random.normalvariate(24.9, 1.6633) * ((height / 100) ** 2), 1)
 
-    sql = """INSERT INTO players (forename, surname)
-            VALUES(?, ?)"""
+    # # Assign the player to first available team with an open spot
+    # valid_team = False
+    # i = 1
+    # while not valid_team:
+    #     # If there are less than 5 players on the team, assign the player
+    #     if len(teams[i].players) < 5:
+    #         teams[i].addplayer(self)
+    #         self.team = i
+    #         valid_team = True
+    #     elif i == len(teams) - 1:
+    #         teams[0].addplayer(self)
+    #         self.team = 0
+    #         valid_team = True
+    #     else:
+    #         i += 1
+
+    sql = """INSERT INTO players (forename, surname, team_id)
+            VALUES(?, ?, ?)"""
     cur = conn.cursor()
-    cur.execute(sql, (forename, surname))
+    cur.execute(sql, (forename, surname, team_id))
     current_id = cur.lastrowid
 
     data = [current_id, str(l_height_feet), weight, l_height, height, armspan, reach]
@@ -175,7 +212,7 @@ def create_player(conn, country):
         maths.ceil((random.random() * random.random() * (max_rating - skill_dict["ovr"])) + skill_dict["ovr"]))
 
     # Give each player a grade based on their ovr and pot
-    temp_grade = (skill_dict["pot"] + skill_dict["ovr"])/2
+    temp_grade = (skill_dict["pot"] + skill_dict["ovr"]) / 2
 
     if temp_grade > 90:
         skill_dict["grade"] = "A+"
@@ -245,12 +282,12 @@ def add_player(conn, player):
     return cur.lastrowid
 
 
-def add_random_players(quantity, country):
+def add_random_players(quantity, country, team_id=0):
     # create a database connection
     conn = create_connection(database)
     with conn:
         for i in range(quantity):
-            create_player(conn, country)
+            create_player(conn, country, team_id)
 
 
 def read_players(player_id):
